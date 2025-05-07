@@ -1,0 +1,14 @@
+{
+  "firstName": "Кукушка",
+  "lastName": "Кукушкина",
+  "address": "Садовая, 56",
+  "metroStation": "Садовая",
+  "phone": "+7 800 355 35 35",
+  "rentTime": 6,
+  "deliveryDate": "2026-06-06",
+  "comment": "Очень жду",
+  "color": [
+    "BLACK",
+    "GREY"
+  ]
+}
