@@ -1,51 +1,36 @@
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.io.File;
-
-import static io.restassured.RestAssured.given;
+import pojo.Order;
 import static org.hamcrest.Matchers.notNullValue;
 
 
 @RunWith(Parameterized.class)
 public class CreateOrderTest {
-    private final String pathName;
+    private final String[] color;
 
-    public CreateOrderTest(String pathName) {
-        this.pathName = pathName;
+    public CreateOrderTest(String[] color) {
+        this.color = color;
     }
-
-    @Before
-    public void setUp() {
-        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru";
-    }
-
     @Parameterized.Parameters
-    public static Object[][] getFile() {
+    public static Object[][] getColor() {
         return new Object[][]{
-                {"src/test/resources/blackColor.json"},
-                {"src/test/resources/greyColor.json"},
-                {"src/test/resources/blackAndGreyColor.json"},
-                {"src/test/resources/withoutColor.json"},
+                {new String[]{"BLACK"}},
+                {new String[]{"GREY"}},
+                {new String[]{"BLACK", "GREY"}},
+                {new String[]{""}},
         };
     }
 
     @Step("Создать заказ")
     public Response createOrder() {
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(new File(pathName))
-                .when()
-                .post("/api/v1/orders");
-        return response;
+        Order order = new Order("Кукушка", "Кукушкина", "Садовая, 56", "Садовая", "+7 800 355 35 35", 6, "2026-06-06", "Очень жду", color);
+        CreateOrder createOrder = new CreateOrder(order);
+        return createOrder.createOrder();
     }
 
     @Step("Проверить код ответа")

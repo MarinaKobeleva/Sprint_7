@@ -1,89 +1,56 @@
+import pojo.Courier;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-
-import static io.restassured.RestAssured.given;
+import pojo.CourierWithoutLogin;
 import static org.hamcrest.Matchers.equalTo;
 
 public class CreateCourierTest {
 
-
-    @Before
-    public void setUp() {
-        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru";
-    }
-
     @After
     public void deleteCourierAfterTest() {
-        DeleteCourier deleteCourier = new DeleteCourier();
+        Courier courier = new Courier("tralala", "8965");
+        DeleteCourier deleteCourier = new DeleteCourier(courier);
         deleteCourier.deleteCourier();
     }
 
     @Step("Создать нового курьера")
     public Response createNewCourier() {
-        File newCourier = new File("src/test/resources/newCourier.json");
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(newCourier)
-                .when()
-                .post("/api/v1/courier");
-        return response;
+        Courier courier = new Courier("tralala", "8965", "one");
+        CreateCourier createCourier = new CreateCourier(courier);
+        return createCourier.createCourier();
     }
 
     @Step("Создать нового курьера со всеми обязательными полями")
     public Response createNewCourierWithRequiredFields() {
-        File newCourierWithRequiredFields = new File("src/test/resources/newCourierWithRequiredFields.json");
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(newCourierWithRequiredFields)
-                .when()
-                .post("/api/v1/courier");
-        return response;
+        Courier courier = new Courier("tralala", "8965");
+        CreateCourier createCourier = new CreateCourier(courier);
+        return createCourier.createCourier();
     }
 
     @Step("Создать нового курьера без поля логин")
     public Response createNewCourierWithoutLoginFields() {
-        File newCourierWithoutLogin = new File("src/test/resources/newCourierWithoutLogin.json");
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(newCourierWithoutLogin)
-                .when()
-                .post("/api/v1/courier");
-        return response;
+        CourierWithoutLogin courierWithoutLogin = new CourierWithoutLogin("8965");
+        CreateCourierWithoutLogin createCourierWithoutLogin = new CreateCourierWithoutLogin(courierWithoutLogin);
+        return createCourierWithoutLogin.responseCreateCourierWithoutLogin();
     }
 
     @Step("Создать нового курьера без поля пароль")
     public Response createNewCourierWithoutPasswordFields() {
-        File newCourierWithoutPassword = new File("src/test/resources/newCourierWithoutPassword.json");
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(newCourierWithoutPassword)
-                .when()
-                .post("/api/v1/courier");
-        return response;
+        Courier courier = new Courier("tralala");
+        CreateCourier createCourier = new CreateCourier(courier);
+        return createCourier.createCourier();
     }
 
     @Step("Создать нового курьера с существующим логином")
     public Response createNewCourierWithIdenticalLogin() {
-        File newCourierWithIdenticalLogin = new File("src/test/resources/newCourierWithIdenticalLogin.json");
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(newCourierWithIdenticalLogin)
-                .when()
-                .post("/api/v1/courier");
-        return response;
+        Courier courier = new Courier("tralala", "8965", "one");
+        CreateCourier createCourier = new CreateCourier(courier);
+        createCourier.createCourier();
+        return createCourier.createCourier();
     }
 
     @Step("Проверить тело ответа с String")

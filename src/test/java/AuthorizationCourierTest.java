@@ -1,15 +1,12 @@
+import pojo.Courier;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-
-import static io.restassured.RestAssured.given;
+import pojo.CourierWithoutLogin;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -17,80 +14,51 @@ public class AuthorizationCourierTest {
 
     @Before
     public void setUp() {
-        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru";
-        File newCourier = new File("src/test/resources/newCourier.json");
-        given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(newCourier)
-                .when()
-                .post("/api/v1/courier");
+        Courier courier = new Courier("tralala", "8965", "one");
+        CreateCourier createCourier = new CreateCourier(courier);
+        createCourier.createCourier();
     }
 
     @After
     public void deleteCourierAfterTest() {
-        DeleteCourier deleteCourier = new DeleteCourier();
+        Courier courier = new Courier("tralala", "8965");
+        DeleteCourier deleteCourier = new DeleteCourier(courier);
         deleteCourier.deleteCourier();
     }
 
     @Step("Авторизация со всеми обязательными полями")
     public Response authorizationWithRequiredFields() {
-        File newCourierWithRequiredFields = new File("src/test/resources/newCourierWithRequiredFields.json");
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(newCourierWithRequiredFields)
-                .when()
-                .post("/api/v1/courier/login");
-        return response;
+        Courier courier = new Courier("tralala", "8965");
+        Authorization authorization = new Authorization(courier);
+        return authorization.authorization();
     }
 
     @Step("Авторизация без поля логин")
     public Response authorizationWithoutLoginFields() {
-        File newCourierWithoutLogin = new File("src/test/resources/newCourierWithoutLogin.json");
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(newCourierWithoutLogin)
-                .when()
-                .post("/api/v1/courier/login");
-        return response;
-    }
+            CourierWithoutLogin courierWithoutLogin = new CourierWithoutLogin("8965");
+            AuthorizationWithoutLogin authorizationWithoutLogin = new AuthorizationWithoutLogin(courierWithoutLogin);
+            return authorizationWithoutLogin.authorizationWithoutLogin();
+        }
 
     @Step("Авторизация под неправильным логином")
     public Response authorizationIncorrectLogin() {
-        File incorrectLogin = new File("src/test/resources/incorrectLogin.json");
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(incorrectLogin)
-                .when()
-                .post("/api/v1/courier/login");
-        return response;
+        Courier courier = new Courier("tralalala", "8965");
+        Authorization authorization = new Authorization(courier);
+        return authorization.authorization();
     }
 
     @Step("Авторизация под неправильным паролем")
     public Response authorizationIncorrectPassword() {
-        File incorrectPassword = new File("src/test/resources/incorrectPassword.json");
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(incorrectPassword)
-                .when()
-                .post("/api/v1/courier/login");
-        return response;
+        Courier courier = new Courier("tralala", "6565");
+        Authorization authorization = new Authorization(courier);
+        return authorization.authorization();
     }
 
     @Step("Авторизация под несуществующим пользователем")
     public Response authorizationIncorrectLoginAndPassword() {
-        File incorrectLoginAndPassword = new File("src/test/resources/incorrectLoginAndPassword.json");
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(incorrectLoginAndPassword)
-                .when()
-                .post("/api/v1/courier/login");
-        return response;
+        Courier courier = new Courier("tralalala", "6565");
+        Authorization authorization = new Authorization(courier);
+        return authorization.authorization();
     }
 
     @Step("Проверить тело ответа с String")

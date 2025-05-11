@@ -1,21 +1,29 @@
-import java.io.File;
+import pojo.Courier;
+import pojo.GetCourierId;
 
 import static io.restassured.RestAssured.given;
 
-public class DeleteCourier extends CourierId {
+public class DeleteCourier extends BaseSpecClass {
+
+     private final Courier courier;
+
+     public DeleteCourier(Courier courier) {
+          this.courier = courier;
+     }
 
      public int getCourierId() {
           return given()
-                  .header("Content-type", "application/json")
-                  .body(new File("src/test/resources/checkCourierId.json"))
-                  .post("/api/v1/courier/login")
+                  .spec(requestSpec)
+                  .body(courier)
+                  .post(UriConst.LOGIN_URI)
                   .body()
-                  .as(CourierId.class)
+                  .as(GetCourierId.class)
                   .getId();
      }
 
      public void deleteCourier() {
           given()
-                  .delete("/api/v1/courier/" + getCourierId());
+                  .spec(requestSpec)
+                  .delete(UriConst.DELETE_URI + getCourierId());
      }
 }
